@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -24,15 +25,22 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new RuntimeException("Employee already exists");
         }
         Employee employeeEntity=modelMapper.map(employeeDto, Employee.class);
-
         Employee savedEmpEntity = employeeRepository.save(employeeEntity);
-
         return modelMapper.map(savedEmpEntity,EmployeeDto.class);
     }
 
     @Override
     public EmployeeDto updateEmployee(Long id, EmployeeDto employeeDto) {
-        return null;
+
+        if(id==null || employeeDto.getId()==null){
+            throw new RuntimeException("Please provide employee id");
+        }
+        if(!Objects.equals(id,employeeDto.getId())){
+            throw new RuntimeException("Id mismatch");
+        }
+        Employee employeeEntity=modelMapper.map(employeeDto, Employee.class);
+        Employee updatedEmpEntity = employeeRepository.save(employeeEntity);
+        return modelMapper.map(updatedEmpEntity,EmployeeDto.class);
     }
 
     @Override
