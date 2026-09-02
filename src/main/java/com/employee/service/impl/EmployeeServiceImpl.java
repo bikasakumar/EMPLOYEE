@@ -38,6 +38,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if(!Objects.equals(id,employeeDto.getId())){
             throw new RuntimeException("Id mismatch");
         }
+        employeeRepository.findById(id).orElseThrow(()->new RuntimeException("Employee not found"));
         Employee employeeEntity=modelMapper.map(employeeDto, Employee.class);
         Employee updatedEmpEntity = employeeRepository.save(employeeEntity);
         return modelMapper.map(updatedEmpEntity,EmployeeDto.class);
@@ -45,16 +46,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void deleteEmployee(Long id) {
-
+        Employee employee = employeeRepository.findById(id).orElseThrow(()-> new RuntimeException("Employee not found"));
+        employeeRepository.delete(employee);
     }
 
     @Override
     public EmployeeDto getSingleEmployee(Long id) {
-        return null;
+        Employee employee = employeeRepository.findById(id).orElseThrow(()->new RuntimeException("Employee not found"));
+        return modelMapper.map(employee, EmployeeDto.class);
     }
 
     @Override
     public List<EmployeeDto> getAllEmployees() {
-        return null;
+        List<Employee> employeeList = employeeRepository.findAll();
+        return employeeList.stream().map(employee -> modelMapper.map(employee,EmployeeDto.class)).toList();
     }
 }
